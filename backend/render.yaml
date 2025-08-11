@@ -1,0 +1,38 @@
+services:
+  - name: django-web
+    type: web
+    env: python
+    plan: starter
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "https://horizontal-workflow-synthesis-fe-nine.vercel.app"
+      - key: DATABASE_URL
+        sync: false
+      - key: CELERY_BROKER_URL
+        sync: false
+    postDeployCommand: python manage.py migrate
+
+  - name: celery-worker
+    type: worker
+    env: python
+    plan: starter
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: celery -A backend worker --loglevel=info
+    autoDeploy: true
+    envVars:
+      - fromService:
+          name: django-web
+          type: web
+          envVars: [DJANGO_SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASE_URL, CELERY_BROKER_URL]
