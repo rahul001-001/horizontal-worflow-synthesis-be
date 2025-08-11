@@ -85,6 +85,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+CORS_ALLOWED_ORIGINS = [
+    os.environ.get('CORS_ALLOWED_ORIGINS')
+]
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
