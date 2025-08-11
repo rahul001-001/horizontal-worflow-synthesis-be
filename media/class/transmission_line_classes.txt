@@ -1,0 +1,5 @@
+0: Tower Members Missing
+1: Extra Holes Present 
+2: Insulator Damaged 
+3: Corona Ring Missing  
+4: Copper Bond Missing

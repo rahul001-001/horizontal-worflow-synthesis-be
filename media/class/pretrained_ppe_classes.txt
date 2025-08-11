@@ -1,0 +1,4 @@
+0: Helmet
+1: No Helmet
+2: Jacket
+3: No Jacket
