@@ -44,7 +44,7 @@ class WorkflowStep(models.Model):
         return f"{self.workflow.name} - Step {self.step_number}"
 
 class WorkflowStepRun(models.Model):
-    workflow_step = models.ForeignKey(WorkflowStep, on_delete=models.CASCADE, related_name='steps')
+    workflow_step = models.ForeignKey(WorkflowStep, on_delete=models.CASCADE, related_name='run_steps')
     start_time = models.DateTimeField(auto_now_add=True, null=True)
     end_time = models.DateTimeField(null=True)
 
@@ -65,7 +65,7 @@ class WorkflowRun(models.Model):
     task_id = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.workflow.name
 
 class ModelPerformance(models.Model):
     workflow_run = models.ForeignKey(WorkflowRun, null=False, on_delete=models.CASCADE, related_name='performance_workflow_run')

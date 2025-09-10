@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, StreamingHttpResponse
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -280,3 +280,21 @@ class DownloadFileView(APIView):
         )
 
         return response
+
+
+class ServeVideoView(APIView):
+    def get(self,request):
+        # Get the relative path from query parameter
+        relative_path = request.GET.get('path')
+        if not relative_path:
+            raise Http404("No path provided.")
+
+        # Construct full absolute path
+        abs_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+
+        # Check if the file exists
+        if not os.path.exists(abs_path) or not os.path.isfile(abs_path):
+            raise Http404("Video not found.")
+
+        # Return file as a streaming response
+        return FileResponse(open(abs_path, 'rb'), content_type='video/mp4')

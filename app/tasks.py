@@ -123,7 +123,7 @@ def run_whl_task(
         raise ValueError(f'Expected image or folder for step {step_number}.')
 
     print(f"[{datetime.now()}] Installing wheel: {whl_path}")
-    subprocess.check_call(["pip", "install", whl_path])
+    subprocess.check_call(["pip", "install", "--no-deps", "--no-cache-dir", "--force-reinstall", whl_path])
 
     package_name = get_package_name_from_whl(whl_path)
     classes = load_classes_from_model_folder(classes_path)
@@ -144,10 +144,15 @@ def run_whl_task(
         workflow_step_run.end_time = datetime.now()
         workflow_step_run.save()
 
-        step.result_file = result["csv_file"]
+        csv_path = os.path.join(output_path, f"{step_number}_results.csv")
+        video_path = os.path.join(output_path, f"{step_number}_output.mp4")
+
+        # step.result_file = result["csv_file"]
+        step.result_file = csv_path
         step.save()
 
-        accuracy = compute_accuracy(ground_truth_path, result["csv_file"])
+        # accuracy = compute_accuracy(ground_truth_path, result["csv_file"])
+        accuracy = compute_accuracy(ground_truth_path, csv_path)
         ModelPerformance.objects.create(
             workflow_run=run,
             workflow_step_run=workflow_step_run,
@@ -172,78 +177,6 @@ def run_whl_task(
         sys.stdout = original_stdout
         sys.stderr = original_stderr
         log_fh.close()
-
-# @celery_app.task(name="tasks.run_whl_task")
-# def run_whl_task(
-#     run_id,
-#     step_number,
-#     step_id,
-#     whl_path,
-#     input_path,
-#     output_path,
-#     classes_path,
-#     ground_truth_path,
-#     model_path,
-#     input_type,
-# ):
-
-#     run = WorkflowRun.objects.filter(id=run_id).first()
-#     step = WorkflowStep.objects.filter(id=step_id).first()
-
-#     workflow_step_run = WorkflowStepRun.objects.create(
-#         workflow_step = step,
-#         start_time = datetime.now()
-#     )
-
-#     if input_type == "video" and not input_path.endswith(settings.VIDEO_EXTENSIONS):
-#         raise ValueError(f'Input type to step {step_number} of workflow {run.workflow.name} was expected to be a video.Aborting execution.')
-#     if input_type == "image" and (not input_path.endswith(settings.IMAGE_EXTENSIONS) or not os.path.isdir(input_path)):
-#         raise ValueError(f'Input type to step {step_number} of workflow {run.workflow.name} was expected to be an image or image directory.Aborting execution.')
-
-#     # Install the wheel
-#     subprocess.check_call(["pip", "install", whl_path])
-
-#     package_name = get_package_name_from_whl(whl_path)
-#     classes = load_classes_from_model_folder(classes_path)
-
-#     try:
-#         # Import and run the inference function from the installed package
-#         #module = importlib.import_module(f"{package_name}.inference")
-#         module = importlib.import_module(f"inference.inference")
-#         result = module.run_inference(
-#             input_path=input_path,
-#             step_number=step_number,
-#             output_path=output_path,
-#             classes=classes,
-#             model_path=model_path,
-#             input_type=input_type
-#         )
-
-#         run.end_time = datetime.now()
-#         run.save()
-
-#         workflow_step_run.end_time = datetime.now()
-#         workflow_step_run.save()
-
-#         step.result_file = result['csv_file']
-#         step.save()
-
-#         accuracy = compute_accuracy(ground_truth_path, result['csv_file'])
-
-#         ModelPerformance.objects.create(
-#             workflow_run = run,
-#             workflow_step_run = workflow_step_run,
-#             accuracy = accuracy
-#         )
-#         print('Wheel file succesfully executed.')
-#         return result
-
-#     except Exception as e:
-#         if run:
-#             run.error = True
-#             run.error_message = str(e)
-#             run.save()
-#         return f"Error running wheel: {e}"
 
 @celery_app.task
 def chain_step_wrapper(prev_result, run_id, step_number, step_id, whl_path, output_path, classes_path, ground_truth_path, model_path, input_type):

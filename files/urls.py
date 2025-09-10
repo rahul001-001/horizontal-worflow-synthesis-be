@@ -7,7 +7,8 @@ from .views import (
     DeleteInputFolderView,
     DeleteFileView,
     DownloadFolderView,
-    DownloadFileView
+    DownloadFileView,
+    ServeVideoView
 )
 
 urlpatterns = [
@@ -22,6 +23,8 @@ urlpatterns = [
     path('delete/file/<int:pk>/<str:file_type>/', DeleteFileView.as_view(), name='delete-file'),
     path('download/output_path/', DownloadFolderView.as_view(), name='download-output-folder'),
     path('downloadfile/', DownloadFileView.as_view(), name='download-file'),
+
+    path('download/serve-video/', ServeVideoView.as_view())
 
     # path('download/wheel/<int:pk>/', WheelFileDownloadView.as_view(), name='download-wheel-file'),
     # path('download/model/<int:pk>/', ModelFileDownloadView.as_view(), name='download-model-file'),

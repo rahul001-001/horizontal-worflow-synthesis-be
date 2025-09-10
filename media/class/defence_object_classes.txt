@@ -1,2 +1,0 @@
-0: person
-1: tank

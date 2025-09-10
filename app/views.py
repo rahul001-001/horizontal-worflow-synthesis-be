@@ -28,7 +28,7 @@ from .serializers import (
 )
 from celery import chain
 from django.conf import settings
-import os
+import os, shutil
 
 class WorkFlowView(APIView):
     permission_classes = [IsAuthenticated]
@@ -112,6 +112,10 @@ class WorkflowRunView(APIView):
             instance = WorkflowRun.objects.get(id=pk)
         except WorkflowRun.DoesNotExist:
             return Response({"error": "Workflow not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        folder_path = os.path.join(settings.MEDIA_ROOT, instance.output)
+        if os.path.exists(folder_path):
+            shutil.rmtree(folder_path)
 
         instance.delete()
 
@@ -235,34 +239,31 @@ class WorkflowDetailView(APIView):
         except Workflow.DoesNotExist:
             return Response({"error": "Workflow not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        instance.steps.all().delete()
-
-        step_counter = 0
-        new_steps = []
-        for step in request.data['steps']:
-            step_counter += 1
-            workflow_step = WorkflowStep(
-                workflow=instance,
-                step_number=step['step_number'],
-                wheel_file_id=step['wheel_file']['id'],
-                model_file_id=step['model_file']['id'] if step['model_file'] else None,
-            )
-            new_steps.append(workflow_step)
-        
-        WorkflowStep.objects.bulk_create(new_steps)
-
-        # return Response(status=status.HTTP_200_OK)
-        serializer = WorkflowWriteSerializer(instance, data={
+        workflow_serializer = WorkflowWriteSerializer(instance, data={
             'name': request.data['name'],
             'description': request.data['description'],
             'input': request.data['input'],
         }, partial=True)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        workflow_steps = instance.steps.all()
+        workflow_steps_id_mapping = {workflow_step.id: workflow_step for workflow_step in workflow_steps}
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        for step in request.data['steps']:
+            
+            workflow_steps_id_mapping[step['id']].workflow_id =  instance.id
+            workflow_steps_id_mapping[step['id']].step_number = step['step_number']
+            workflow_steps_id_mapping[step['id']].wheel_file_id = step['wheel_file']['id']
+            workflow_steps_id_mapping[step['id']].model_file_id = step['model_file']['id']
+            workflow_steps_id_mapping[step['id']].class_file_id = step['class_file']['id']
+            workflow_steps_id_mapping[step['id']].ground_truth_file_id =  step['ground_truth_file']['id']
+            workflow_steps_id_mapping[step['id']].input_type =  step['input_type']
+            workflow_steps_id_mapping[step['id']].save()
+
+        if workflow_serializer.is_valid():
+            workflow_serializer.save()
+            return Response(workflow_serializer.data, status=status.HTTP_200_OK)
+
+        return Response(workflow_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
     def delete(self, request, pk):
