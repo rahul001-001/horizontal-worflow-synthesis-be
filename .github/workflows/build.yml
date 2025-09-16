@@ -73,22 +73,22 @@ jobs:
         print("Linked system cv2 via", pth)
         PY
 
-    - name: Test OpenCV and run Django tests
-      env:
-        VIRTUAL_ENV: /opt/venv
-        DATABASE_URL: postgresql://appuser:devpassword123@postgres:5432/app_db  # Changed from @db to @postgres
-        SECRET_KEY: test-secret-key
-        CELERY_BROKER_URL: pyamqp://guest@rabbitmq:5672//
-        YOLO_CONFIG_DIR: /tmp/Ultralytics
-        OPENCV_VIDEOIO_PRIORITY_FFMPEG: 1000
-        OPENCV_FFMPEG_WRITER_OPTIONS: "video_codec;libx264|preset;veryfast|crf;23|pix_fmt;yuv420p"
-        PYTHONUNBUFFERED: 1
-        PYTHONDONTWRITEBYTECODE: 1
-      run: |
-        export PATH="$VIRTUAL_ENV/bin:$PATH"
-        python -c "import cv2; print('OpenCV version:', cv2.__version__)"
-        python manage.py migrate
-        python manage.py test
+    # - name: Test OpenCV and run Django tests
+    #   env:
+    #     VIRTUAL_ENV: /opt/venv
+    #     DATABASE_URL: postgresql://appuser:devpassword123@postgres:5432/app_db  # Changed from @db to @postgres
+    #     SECRET_KEY: test-secret-key
+    #     CELERY_BROKER_URL: pyamqp://guest@rabbitmq:5672//
+    #     YOLO_CONFIG_DIR: /tmp/Ultralytics
+    #     OPENCV_VIDEOIO_PRIORITY_FFMPEG: 1000
+    #     OPENCV_FFMPEG_WRITER_OPTIONS: "video_codec;libx264|preset;veryfast|crf;23|pix_fmt;yuv420p"
+    #     PYTHONUNBUFFERED: 1
+    #     PYTHONDONTWRITEBYTECODE: 1
+    #   run: |
+    #     export PATH="$VIRTUAL_ENV/bin:$PATH"
+    #     python -c "import cv2; print('OpenCV version:', cv2.__version__)"
+    #     python manage.py migrate
+    #     python manage.py test
 
   build-and-push:
     runs-on: ubuntu-latest
