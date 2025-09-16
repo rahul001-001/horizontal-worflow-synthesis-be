@@ -132,8 +132,8 @@ class Command(BaseCommand):
     def create_test_users(self, force=False):
         """Create test users for development"""
         test_users = [
-            {'username': 'testuser1', 'email': 'test1@example.com', 'first_name': 'Test', 'last_name': 'User One', 'role':'Engineer'},
-            {'username': 'testuser2', 'email': 'test2@example.com', 'first_name': 'Test', 'last_name': 'User Two', 'role':'Scientist'},
+            {'username': 'testuser1', 'email': 'test1@example.com', 'first_name': 'Test', 'last_name': 'User One', 'role':'engineer'},
+            {'username': 'testuser2', 'email': 'test2@example.com', 'first_name': 'Test', 'last_name': 'User Two', 'role':'scientist'},
         ]
         
         created_count = 0
