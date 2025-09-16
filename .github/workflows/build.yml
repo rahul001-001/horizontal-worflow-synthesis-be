@@ -76,7 +76,7 @@ jobs:
     - name: Test OpenCV and run Django tests
       env:
         VIRTUAL_ENV: /opt/venv
-        DATABASE_URL: postgresql://appuser:devpassword123@postgres:5432/app_db
+        DATABASE_URL: postgresql://appuser:devpassword123@postgres:5432/app_db  # Changed from @db to @postgres
         SECRET_KEY: test-secret-key
         CELERY_BROKER_URL: pyamqp://guest@rabbitmq:5672//
         YOLO_CONFIG_DIR: /tmp/Ultralytics
