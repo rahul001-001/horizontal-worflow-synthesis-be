@@ -99,7 +99,7 @@ DATABASES = {
         'NAME': os.environ.get('PGDATABASE', 'app_db'),
         'USER': os.environ.get('PGUSER', 'appuser'),
         'PASSWORD': os.environ.get('PGPASSWORD', 'devpassword123'),
-        'HOST': os.environ.get('PGHOST', 'db'),
+        'HOST': os.environ.get('PGHOST', 'localhost'),
         'PORT': '5432',
     }
 }
