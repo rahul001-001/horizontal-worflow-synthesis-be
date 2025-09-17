@@ -89,7 +89,6 @@ jobs:
     #     python -c "import cv2; print('OpenCV version:', cv2.__version__)"
     #     python manage.py migrate
     #     python manage.py test
-    
 
   build-and-push:
     runs-on: ubuntu-latest
