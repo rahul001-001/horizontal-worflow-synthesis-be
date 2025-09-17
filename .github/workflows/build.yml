@@ -117,4 +117,5 @@ jobs:
           rahul001935/workflow-synthesizer:${{ github.sha }}
         build-args: |
           DEBIAN_FRONTEND=noninteractive
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
 
