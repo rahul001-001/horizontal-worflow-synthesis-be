@@ -90,6 +90,7 @@ jobs:
     #     python manage.py migrate
     #     python manage.py test
 
+
   build-and-push:
     runs-on: ubuntu-latest
     needs: test
