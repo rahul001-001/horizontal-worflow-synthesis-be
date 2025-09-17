@@ -3,7 +3,7 @@ FROM python:3.11-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ARG SECRET_KEY-""
+ARG SECRET_KEY=""
 ENV SECRET_KEY=${SECRET_KEY}
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
