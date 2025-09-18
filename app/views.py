@@ -45,18 +45,19 @@ class WorkFlowView(APIView):
         })
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
+        instance_id = instance.id
 
         step_counter = 0
         for step in request.data['steps']:
             step_counter += 1
             workflow_step = WorkflowStepWriteSerializer(data={
-                'workflow': instance.id,
+                'workflow': instance_id,
                 'step_number': step['step_number'],
-                'wheel_file': step['script'],
-                'model_file': step['model'],
-                'class_file': step['class'],
+                'wheel_file_id': step['script'],
+                'model_file_id': step['model'],
+                'class_file_id': step['class'],
                 'input_type': step['input_type'],
-                'ground_truth_file': step['ground_truth'],
+                'ground_truth_file_id': step['ground_truth'],
                 'result_file': f"media/output/u{step['step_number']}_inference.csv"
             })
             workflow_step.is_valid(raise_exception=True)

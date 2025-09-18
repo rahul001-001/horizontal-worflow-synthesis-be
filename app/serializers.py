@@ -57,7 +57,7 @@ class WorkflowStepWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkflowStep
         fields = [
-            'workflow_id',
+            'workflow',
             'step_number',
             'wheel_file_id',
             'class_file_id',

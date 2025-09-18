@@ -29,7 +29,7 @@ class Workflow(models.Model):
 class WorkflowStep(models.Model):
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name='steps')
     step_number = models.PositiveIntegerField()
-    wheel_file = models.ForeignKey(UploadedWheelFile, on_delete=models.CASCADE)
+    wheel_file = models.ForeignKey(UploadedWheelFile, on_delete=models.CASCADE, null=True)
     model_file = models.ForeignKey(UploadedModelFile, null=True, on_delete=models.CASCADE)
     class_file = models.ForeignKey(UploadedClassFile, null=True, on_delete=models.CASCADE)
     ground_truth_file = models.ForeignKey(UploadedGroundTruthFile, null=True, on_delete=models.CASCADE)
