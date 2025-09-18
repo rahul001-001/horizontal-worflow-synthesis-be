@@ -59,10 +59,10 @@ class WorkflowStepWriteSerializer(serializers.ModelSerializer):
         fields = [
             'workflow',
             'step_number',
-            'wheel_file_id',
-            'class_file_id',
-            'ground_truth_file_id',
-            'model_file_id',
+            'wheel_file',
+            'class_file',
+            'ground_truth_file',
+            'model_file',
             'input_type'
         ]
 
